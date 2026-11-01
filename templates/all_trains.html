@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}Available Trains | RailSmart{% endblock %}
+
+{% block content %}
+<section class="page-section">
+    <div class="container">
+        <div class="page-header">
+            <div>
+                <span class="eyebrow">Railway network</span>
+                <h1>Available Trains</h1>
+                <p>Explore available trains and choose the right journey for you.</p>
+            </div>
+            <a href="{{ url_for('index') }}" class="btn btn-outline">← Back to Search</a>
+        </div>
+
+        <div class="train-results">
+            {% for train in trains %}
+            <div class="train-result-card">
+                <div class="train-result-top">
+                    <div>
+                        <span class="train-number">{{ train.train_number }}</span>
+                        <h2>{{ train.train_name }}</h2>
+                    </div>
+
+                    <div>
+                        {% if train.available_seats > 10 %}
+                            <span class="status-badge status-confirmed">
+                                {{ train.available_seats }} seats available
+                            </span>
+                        {% elif train.available_seats > 0 %}
+                            <span class="status-badge status-limited">
+                                {{ train.available_seats }} seats left
+                            </span>
+                        {% else %}
+                            <span class="status-badge status-full">
+                                Fully booked
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="train-route">
+                    <div class="route-station">
+                        <span class="route-label">Departure</span>
+                        <strong>{{ train.source.name }}</strong>
+                        <small>{{ train.source.code }}</small>
+                        <span class="train-time">{{ train.departure_time }}</span>
+                    </div>
+
+                    <div class="route-middle">
+                        <span class="route-arrow">→</span>
+                        <span class="route-duration">
+                            {% set dep = train.departure_time.split(':') %}
+                            {% set arr = train.arrival_time.split(':') %}
+                            {% set dep_hours = dep[0]|int %}
+                            {% set dep_mins = dep[1]|int %}
+                            {% set arr_hours = arr[0]|int %}
+                            {% set arr_mins = arr[1]|int %}
+
+                            {% set total_dep = dep_hours * 60 + dep_mins %}
+                            {% set total_arr = arr_hours * 60 + arr_mins %}
+
+                            {% if total_arr < total_dep %}
+                                {% set duration = (24*60 - total_dep) + total_arr %}
+                            {% else %}
+                                {% set duration = total_arr - total_dep %}
+                            {% endif %}
+
+                            {{ (duration // 60) }}h {{ (duration % 60) }}m
+                        </span>
+                    </div>
+
+                    <div class="route-station route-station-end">
+                        <span class="route-label">Arrival</span>
+                        <strong>{{ train.destination.name }}</strong>
+                        <small>{{ train.destination.code }}</small>
+                        <span class="train-time">{{ train.arrival_time }}</span>
+                    </div>
+                </div>
+
+                <div class="train-result-bottom">
+                    <div class="train-meta">
+                        <span>Available seats</span>
+                        <strong>{{ train.available_seats }}</strong>
+                    </div>
+
+                    <div>
+                        {% if current_user.is_authenticated %}
+                            {% if train.available_seats > 0 %}
+                                <a href="{{ url_for('book_train', train_id=train.train_id) }}"
+                                   class="btn btn-primary">
+                                    Book Now
+                                </a>
+                            {% else %}
+                                <button class="btn btn-outline" disabled>
+                                    Fully Booked
+                                </button>
+                            {% endif %}
+                        {% else %}
+                            <a href="{{ url_for('login') }}" class="btn btn-primary">
+                                Login to Book
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="empty-bookings">
+                <div class="empty-icon">◇</div>
+                <h2>No trains available</h2>
+                <p>Try searching again with a different route or journey date.</p>
+                <a href="{{ url_for('index') }}" class="btn btn-primary">
+                    Search Trains
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

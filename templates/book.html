@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Book Train | RailSmart{% endblock %}
+
+{% block content %}
+<section class="page-section">
+    <div class="container">
+        <div class="booking-layout">
+            <div class="booking-main">
+                <div class="page-header">
+                    <div>
+                        <span class="eyebrow">Complete your journey</span>
+                        <h1>Book your train</h1>
+                        <p>Enter your journey details to confirm your booking.</p>
+                    </div>
+                </div>
+
+                <div class="booking-card">
+                    <div class="booking-card-header">
+                        <div>
+                            <span class="eyebrow">Selected train</span>
+                            <h2>{{ train.train_name }}</h2>
+                        </div>
+                        <span class="train-number">{{ train.train_number }}</span>
+                    </div>
+
+                    <div class="route-display">
+                        <div class="route-point">
+                            <span class="route-label">From</span>
+                            <strong>{{ train.source.name }}</strong>
+                        </div>
+
+                        <div class="route-line">
+                            <span>→</span>
+                        </div>
+
+                        <div class="route-point route-point-end">
+                            <span class="route-label">To</span>
+                            <strong>{{ train.destination.name }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="journey-details">
+                        <div>
+                            <span>Departure</span>
+                            <strong>{{ train.departure_time }}</strong>
+                        </div>
+                        <div>
+                            <span>Available seats</span>
+                            <strong>{{ train.available_seats }}</strong>
+                        </div>
+                    </div>
+
+                    <form method="POST" class="booking-form">
+                        <div class="form-group">
+                            <label for="seats">Number of Seats</label>
+                            <input
+                                type="number"
+                                id="seats"
+                                name="seats"
+                                class="form-control"
+                                min="1"
+                                max="{{ train.available_seats }}"
+                                value="1"
+                                required
+                            >
+                            <small>Select the number of seats you want to book.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="journey_date">Journey Date</label>
+                            <input
+                                type="date"
+                                id="journey_date"
+                                name="journey_date"
+                                class="form-control"
+                                required
+                            >
+                        </div>
+
+                        <button type="submit" class="btn btn-primary booking-submit">
+                            Confirm Booking
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

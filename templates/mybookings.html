@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}My Bookings | RailSmart{% endblock %}
+
+{% block content %}
+<section class="page-section">
+    <div class="container">
+        <div class="page-header">
+            <div>
+                <span class="eyebrow">Your journeys</span>
+                <h1>My Bookings</h1>
+                <p>View and manage your RailSmart train bookings.</p>
+            </div>
+            <a href="{{ url_for('index') }}" class="btn btn-primary">Book a Train</a>
+        </div>
+
+        {% if bookings %}
+            <div class="booking-table-card">
+                <div class="table-responsive">
+                    <table class="table booking-table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Booking ID</th>
+                                <th>Train</th>
+                                <th>Journey Date</th>
+                                <th>Seats</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for booking in bookings %}
+                            <tr>
+                                <td>
+                                    <span class="booking-id">#{{ booking.booking_id }}</span>
+                                </td>
+                                <td>
+                                    <div class="train-info">
+                                        <strong>{{ booking.train.train_name }}</strong>
+                                        <span>{{ booking.train.train_number }}</span>
+                                    </div>
+                                </td>
+                                <td>{{ booking.journey_date }}</td>
+                                <td>{{ booking.seats_booked }}</td>
+                                <td class="amount">₹{{ booking.total_amount }}</td>
+                                <td>
+                                    <span class="status-badge {{ 'status-confirmed' if booking.status == 'Confirmed' else 'status-other' }}">
+                                        {{ booking.status }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if booking.status == 'Confirmed' %}
+                                        <a href="{{ url_for('cancel_booking', booking_id=booking.booking_id) }}"
+                                           class="btn btn-sm btn-cancel"
+                                           onclick="return confirm('Are you sure you want to cancel this booking?')">
+                                            Cancel
+                                        </a>
+                                    {% else %}
+                                        <span class="text-muted">—</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% else %}
+            <div class="empty-bookings">
+                <div class="empty-icon">◇</div>
+                <h2>No bookings yet</h2>
+                <p>Search for a train and book your first journey with RailSmart.</p>
+                <a class="btn btn-primary" href="{{ url_for('index') }}">Search Trains</a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

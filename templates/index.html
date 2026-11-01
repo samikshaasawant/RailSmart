@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+
+{% block title %}RailSmart | Smart Railway Booking{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+    <div class="container">
+        <div class="hero-content">
+
+            <div class="hero-badge">
+                <span>Smart Railway Journey Planner</span>
+            </div>
+
+            <h1>Travel smarter.<br>Journey better.</h1>
+
+            <p>
+                Plan your railway journey, find available trains and book your trip
+                through a simple and seamless experience.
+            </p>
+
+            <div class="hero-train-visual">
+                <img src="{{ url_for('static', filename='images/train-hero.jpg') }}"
+                     alt="Modern train journey">
+            </div>
+
+        </div>
+
+        <div class="search-card">
+            <div class="search-card-heading">
+                <div>
+                    <span class="eyebrow">Journey planner</span>
+                    <h2>Find your train</h2>
+                </div>
+            </div>
+
+            <form method="POST" action="{{ url_for('search_trains') }}">
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label class="form-label">From</label>
+                        <select name="source" class="form-select" required>
+                            <option value="">Select departure station</option>
+                            {% for station in stations %}
+                                <option value="{{ station.station_id }}">
+                                    {{ station.name }} ({{ station.code }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">To</label>
+                        <select name="destination" class="form-select" required>
+                            <option value="">Select destination station</option>
+                            {% for station in stations %}
+                                <option value="{{ station.station_id }}">
+                                    {{ station.name }} ({{ station.code }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Journey date</label>
+                        <input type="date"
+                               name="journey_date"
+                               class="form-control"
+                               min="{{ today }}"
+                               required>
+                    </div>
+
+                    <div class="col-md-6 search-actions">
+                        <button type="submit" class="btn btn-primary search-button">
+                            Search trains
+                        </button>
+
+                        <a href="{{ url_for('all_trains') }}"
+                           class="btn btn-outline all-trains-button">
+                            All trains
+                        </a>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<section class="home-section">
+    <div class="container">
+
+        <div class="section-heading">
+            <span class="eyebrow">Popular journeys</span>
+
+            <h2 class="section-title">Popular routes</h2>
+
+            <p class="section-subtitle">
+                Explore some of the commonly travelled railway connections.
+            </p>
+        </div>
+
+        <div class="row g-4">
+
+            <div class="col-md-6 col-lg-3">
+                <div class="train-card route-card h-100" data-from="Mumbai" data-to="Delhi">
+                    <h3>Mumbai → Delhi</h3>
+                    <p>Rajdhani Express</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="train-card route-card h-100" data-from="Delhi" data-to="Chennai">
+                    <h3>Delhi → Chennai</h3>
+                    <p>Tamil Nadu Express</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="train-card route-card h-100" data-from="Mumbai" data-to="Bangalore">
+                    <h3>Mumbai → Bangalore</h3>
+                    <p>Udyan Express</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="train-card route-card h-100" data-from="Pune" data-to="Mumbai">
+                    <h3>Pune → Mumbai</h3>
+                    <p>Deccan Queen</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="home-section">
+    <div class="container">
+
+        <div class="section-heading">
+            <span class="eyebrow">RailSmart experience</span>
+
+            <h2 class="section-title">
+                Everything you need for your journey
+            </h2>
+
+            <p class="section-subtitle">
+                RailSmart keeps the essential railway booking experience simple.
+            </p>
+        </div>
+
+        <div class="row g-4">
+
+            <div class="col-md-4">
+                <div class="card feature-card">
+                    <h4>Easy search</h4>
+                    <p>
+                        Select your departure station, destination and journey date
+                        to quickly find suitable trains.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card feature-card">
+                    <h4>Simple booking</h4>
+                    <p>
+                        Choose an available train and complete your booking through
+                        a clear and straightforward workflow.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card feature-card">
+                    <h4>Manage journeys</h4>
+                    <p>
+                        View your bookings and manage your railway journey information
+                        from one place.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="home-section final-cta-section">
+    <div class="container">
+
+        <div class="final-cta">
+
+            <div>
+                <span class="eyebrow">Ready to travel?</span>
+
+                <h2>Plan your next journey.</h2>
+
+                <p>
+                    Search available trains and make your railway journey planning
+                    easier with RailSmart.
+                </p>
+            </div>
+
+            <a href="{{ url_for('all_trains') }}" class="btn btn-primary">
+                Explore trains
+            </a>
+
+        </div>
+
+    </div>
+</section>
+
+<script>
+    function pickStation(select, city) {
+        for (const option of select.options) {
+            if (option.text.toLowerCase().includes(city.toLowerCase())) {
+                select.value = option.value;
+                return;
+            }
+        }
+    }
+
+    document.querySelectorAll('.route-card').forEach(card => {
+        card.addEventListener('click', () => {
+            pickStation(document.querySelector('select[name="source"]'), card.dataset.from);
+            pickStation(document.querySelector('select[name="destination"]'), card.dataset.to);
+            document.querySelector('.search-card').scrollIntoView({ behavior: 'smooth' });
+        });
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results | RailSmart{% endblock %}
+
+{% block content %}
+<section class="page-section">
+    <div class="container">
+        <div class="page-header">
+            <div>
+                <span class="eyebrow">Journey search</span>
+                <h1>Search Results</h1>
+                {% if trains %}
+                    <p>We found {{ trains|length }} train{% if trains|length != 1 %}s{% endif %} for your selected route.</p>
+                {% else %}
+                    <p>We couldn't find a train for your selected route.</p>
+                {% endif %}
+            </div>
+
+            <div class="page-actions">
+                <a href="{{ url_for('all_trains') }}" class="btn btn-outline">View All Trains</a>
+                <a href="{{ url_for('index') }}" class="btn btn-primary">New Search</a>
+            </div>
+        </div>
+
+        {% if trains %}
+            <div class="search-results">
+                {% for train in trains %}
+                <div class="search-train-card">
+                    <div class="search-train-header">
+                        <div>
+                            <span class="train-number">{{ train.train_number }}</span>
+                            <h2>{{ train.train_name }}</h2>
+                        </div>
+
+                        {% if train.available_seats > 10 %}
+                            <span class="status-badge status-confirmed">
+                                Available
+                            </span>
+                        {% elif train.available_seats > 0 %}
+                            <span class="status-badge status-limited">
+                                Limited seats
+                            </span>
+                        {% else %}
+                            <span class="status-badge status-full">
+                                Fully booked
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    <div class="search-route">
+                        <div class="search-station">
+                            <span class="route-label">From</span>
+                            <strong>{{ train.source.name }}</strong>
+                            <small>{{ train.source.code }}</small>
+                            <span class="search-time">{{ train.departure_time }}</span>
+                        </div>
+
+                        <div class="search-route-line">
+                            <span>→</span>
+                        </div>
+
+                        <div class="search-station search-station-end">
+                            <span class="route-label">To</span>
+                            <strong>{{ train.destination.name }}</strong>
+                            <small>{{ train.destination.code }}</small>
+                            <span class="search-time">{{ train.arrival_time }}</span>
+                        </div>
+                    </div>
+
+                    <div class="seat-section">
+                        <div class="seat-heading">
+                            <span>Seat availability</span>
+                            <strong>{{ train.available_seats }} / {{ train.total_seats }}</strong>
+                        </div>
+
+                        <div class="availability-bar">
+                            <div
+                                class="availability-fill"
+                                style="width: {{ ((train.available_seats / train.total_seats * 100) if train.total_seats > 0 else 0) }}%;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="search-train-footer">
+                        {% if current_user.is_authenticated %}
+                            {% if train.available_seats > 0 %}
+                                <a href="{{ url_for('book_train', train_id=train.train_id) }}"
+                                   class="btn btn-primary">
+                                    Book Tickets →
+                                </a>
+                            {% else %}
+                                <button class="btn btn-outline" disabled>
+                                    Fully Booked
+                                </button>
+                            {% endif %}
+                        {% else %}
+                            <a href="{{ url_for('login') }}" class="btn btn-primary">
+                                Login to Book
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+        {% else %}
+            <div class="no-results-card">
+                <div class="empty-icon">◇</div>
+                <h2>No trains found</h2>
+                <p>Please try different stations or explore some of the popular routes below.</p>
+
+                <div class="row g-4 mt-2">
+                    <div class="col-md-6">
+                        <div class="suggestion-card">
+                            <span class="eyebrow">Popular routes</span>
+                            <h3>Try another journey</h3>
+
+                            <div class="route-list">
+                                <span>Mumbai → Delhi</span>
+                                <span>Delhi → Mumbai</span>
+                                <span>Delhi → Chennai</span>
+                                <span>Mumbai → Bangalore</span>
+                                <span>Kolkata → Delhi</span>
+                                <span>Bangalore → Chennai</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="suggestion-card">
+                            <span class="eyebrow">Quick actions</span>
+                            <h3>Continue exploring</h3>
+                            <p>Browse all available trains or start a new search.</p>
+
+                            <div class="quick-actions">
+                                <a href="{{ url_for('all_trains') }}" class="btn btn-outline">
+                                    View All Trains
+                                </a>
+                                <a href="{{ url_for('index') }}" class="btn btn-primary">
+                                    New Search
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

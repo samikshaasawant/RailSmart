@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Login | RailSmart{% endblock %}
+
+{% block content %}
+<section class="auth-section">
+    <div class="container">
+        <div class="auth-wrapper">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <span class="eyebrow">Welcome back</span>
+                    <h1>Login to RailSmart</h1>
+                    <p>Access your bookings and continue planning your journey.</p>
+                </div>
+
+                <form method="POST" class="auth-form">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            class="form-control"
+                            placeholder="Enter your email"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            class="form-control"
+                            placeholder="Enter your password"
+                            required
+                        >
+                    </div>
+
+                    <button type="submit" class="btn btn-primary auth-submit">
+                        Login
+                    </button>
+                </form>
+
+                <div class="auth-footer">
+                    <span>Don't have an account?</span>
+                    <a href="{{ url_for('register') }}">Create an account</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
